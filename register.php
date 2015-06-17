@@ -3,58 +3,57 @@
 <?php
 if (!empty($_POST)) {
 
-    $error = array();
+    $errors = array();
     require_once 'inc/db.php';
 
     if (empty($_POST['username']) || !preg_match('/^[A-Za-z0-9_-éèçàù^¨]+$/', $_POST['username'])) {
 
-        $error['username'] = "Votre pseudo n'est pas valide";
+        $errors['username'] = "Votre pseudo n'est pas valide";
     } else {
-         //chech if user aready exist
-     
+        //chech if user aready exist
+
         $req = $pdo->prepare('SELECT id FROM users WHERE username=?');
         $req->execute([$_POST['username']]);
         $user = $req->fetch();
         //debug($user);
         //die();
-        
+
         if ($user) {
-            
-            $error['username'] = "Ce pseudo est déjà pris";
+
+            $errors['username'] = "Ce pseudo est déjà pris";
         }
-        
     }
 
     if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 
-        $error['email'] = "Votre email n'est pas valide";
+        $errors['email'] = "Votre email n'est pas valide";
     } else {
-         //chech if email aready exist
-     
+        //chech if email aready exist
+
         $req = $pdo->prepare('SELECT id FROM users WHERE email=?');
         $req->execute([$_POST['email']]);
         $email = $req->fetch();
-        //debug($user);
+        //debug($email);
         //die();
-        
+
         if ($email) {
-            
-            $error['email'] = "Cet email est déjà utilisé";
+
+            $errors['email'] = "Cet email est déjà utilisé pour un autre compte";
         }
-        
     }
 
     if (empty($_POST['password']) || !preg_match('/^[A-Za-z0-9]+$/', $_POST['password']) || $_POST['password'] != $_POST['password_confirm']) {
 
-        $error['password'] = "Vous devez saisir un mot de passe valide";
+        $errors['password'] = "Vous devez saisir un mot de passe valide";
     }
 
-    debug($error);
+    debug($errors);
 
-    if (empty($error)) {
+    if (empty($errors)) {
 
-        $req = $pdo->prepare("INSERT INTO users SET username=?, email=?, password=?");
+        $req = $pdo->prepare("INSERT INTO users SET username=?, email=?, password=?, confirmation_token=?");
         $password = md5($_POST['username']);
+        $token = str_random(60);
         $req->execute([$_POST['username'], $_POST['email'], $password]);
         die("Le compte a bien été créé");
     }
@@ -62,6 +61,17 @@ if (!empty($_POST)) {
 ?>
 
 <h1>S'inscrire</h1>
+
+<?php if (!empty($errors)): ?>
+    <div class="alert alert-danger">
+        <h4>Vous n'avez pas rempli le formulaire correctement.</h4>
+        <?php foreach ($errors as $error): ?>
+            <ul>
+                <li><?php echo $error; ?></li>
+            </ul>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
 
 <form action="" method="POST">
 
