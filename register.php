@@ -9,12 +9,29 @@ if (!empty($_POST)) {
 
         $error['username'] = "Votre pseudo n'est pas valide";
     }
+
+    if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+
+        $error['email'] = "Votre email n'est pas valide";
+    }
+
+    if (empty($_POST['password']) || !preg_match('/^[A-Za-z0-9]+$/', $_POST['username']) || $_POST['password'] != $_POST['password_confirm']) {
+
+        $error['password'] = "Vous devez saisir un mot de passe valide";
+    }
     
-  if(empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
-      
-      $error['email'] = "Votre email n'est pas valide";
-  }
-    debug($error);
+   debug($error);
+    
+    if (empty($error)) {
+        
+         require_once 'inc/db.php';
+         
+         $req = $pdo->prepare("INSERT INTO users SET username=?, email=?, password=?");
+         $password = md5($_POST['username']);
+         $req->execute([$_POST['username'], $_POST['email'], $password]);
+         die("Le compte a bien été créé");
+    }
+    
 }
 ?>
 
@@ -32,7 +49,7 @@ if (!empty($_POST)) {
     </div>
     <div class="form-group">
         <label for="">Mot de passe</label>
-        <input type="password" name="mot de passe" class="form-control"/>
+        <input type="password" name="password" class="form-control"/>
     </div>
     <div class="form-group">
         <label for="">Confirmez votre mot de passe</label>
