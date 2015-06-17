@@ -1,6 +1,6 @@
 <?php
 
 function debug($variable){
-    echo '<pre>'. print_r($variable, TRUE).'</pre>';
+     echo '<pre>'. print_r($variable, TRUE).'</pre>';
 }
 
