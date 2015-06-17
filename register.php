@@ -14,7 +14,6 @@ if (!empty($_POST)) {
       
       $error['email'] = "Votre email n'est pas valide";
   }
-
     debug($error);
 }
 ?>
