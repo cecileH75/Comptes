@@ -1,11 +1,11 @@
 <?php
 
-require 'inc/function.php';
+
 if (!empty($_POST)) {
 
     $errors = array();
     require_once 'inc/db.php';
-    
+    require_once 'inc/function.php';
     
     if (empty($_POST['username']) || !preg_match('/^[A-Za-z0-9_-éèçàù^¨]+$/', $_POST['username'])) {
 
@@ -58,9 +58,9 @@ if (!empty($_POST)) {
         $req->execute([$_POST['username'], $_POST['email'], $password, $token]);
         $user_id = $pdo->lastInsertId();
         mail($_POST['email'], 'Confirmation de de la création de votre compre', 
-                "Afin de valider votre compte, merci de cliquer ce lien.\n\nhttp://localhost/Lab/Comptes/confirm.php?id=$user_id&token = $token");
+                "Afin de valider votre compte, merci de cliquer ce lien.\n\nhttp://localhost/Lab/Comptes/confirm.php?id=$user_id&confirmation_token=$token");
         //header('Location: login.php');
-        printf( "http://localhost/Lab/Comptes/confirm.php?id=$user_id&token = $token");
+        printf( "http://localhost/Lab/Comptes/confirm.php?id=$user_id&confirmation_token=$token");
         exit();
     }
 }
