@@ -1,8 +1,7 @@
 <?php 
-session_start(); 
+session_start();
 require 'inc/function.php';       
-?>
-<?php require 'inc/header.php'; ?>
+require 'inc/header.php'; ?>
 
 <h1>Votre compte</h1>
 
